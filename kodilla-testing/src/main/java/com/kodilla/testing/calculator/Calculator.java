@@ -5,8 +5,7 @@ public class Calculator {
     private int b;
 
     public Calculator(){
-//        this.a = a;
-//        this.b = b;
+
     }
 
     public int getA() {
