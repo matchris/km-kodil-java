@@ -147,7 +147,7 @@ public class AdvForumStatisticsTest {
         //When
         advForumStatistics.calculateAdvStatistics(statisticsMock);
 
-        //
+        //Then
         Assert.assertEquals(100, advForumStatistics.getUsersNumber(), 0.01);
         Assert.assertEquals(0.4, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(2, advForumStatistics.getAvgCommentsPerUser(), 0.01);
