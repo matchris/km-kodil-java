@@ -141,7 +141,7 @@ public class AdvForumStatisticsTest {
     }
 
     @Test
-    public void testUserOneHundred() { //40 posts // 2o0 comments // 100 users
+    public void testUserOneHundred() {
         //Given
 
         //When
