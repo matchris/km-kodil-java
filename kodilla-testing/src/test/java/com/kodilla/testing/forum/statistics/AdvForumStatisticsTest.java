@@ -17,7 +17,7 @@ public class AdvForumStatisticsTest {
 
     @Before
     public void beforeEveryTest() {
-        System.out.println("Test Case #" + (++ counter) +" begin ");
+        System.out.println("Test Case #" + (++counter) + " begin ");
         statisticsMock = mock(Statistics.class);
         List<String> usersListForMocking = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
@@ -53,8 +53,10 @@ public class AdvForumStatisticsTest {
         //When
         advForumStatistics.calculateAdvStatistics(statisticsMock);
 
-        //Then
+        //Then --corected
+        Assert.assertEquals(100,advForumStatistics.getUsersNumber(),0.01);
         Assert.assertEquals(0, advForumStatistics.getPostsNumber(), 0.01);
+        Assert.assertEquals(200, advForumStatistics.getCommentsNumber(), 0.01);
         Assert.assertEquals(0, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(2, advForumStatistics.getAvgCommentsPerUser(), 0.01);
         Assert.assertEquals(0, advForumStatistics.getAvgCommentsPerPost(), 0.01);
@@ -69,8 +71,10 @@ public class AdvForumStatisticsTest {
         //When
         advForumStatistics.calculateAdvStatistics(statisticsMock);
 
-        //Then
+        //Then --corected
+        Assert.assertEquals(100,advForumStatistics.getUsersNumber(),0.01);
         Assert.assertEquals(1000, advForumStatistics.getPostsNumber(), 0.01);
+        Assert.assertEquals(200, advForumStatistics.getCommentsNumber(), 0.01);
         Assert.assertEquals(10, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(2, advForumStatistics.getAvgCommentsPerUser(), 0.01);
         Assert.assertEquals(0.2, advForumStatistics.getAvgCommentsPerPost(), 0.01); //  200/1000
@@ -84,8 +88,10 @@ public class AdvForumStatisticsTest {
         //When
         advForumStatistics.calculateAdvStatistics(statisticsMock);
 
-        //Then
+        //Then --corrected
+        Assert.assertEquals(100,advForumStatistics.getUsersNumber(),0.01);
         Assert.assertEquals(40, advForumStatistics.getPostsNumber(), 0.01);
+        Assert.assertEquals(0, advForumStatistics.getCommentsNumber(), 0.01);
         Assert.assertEquals(0.4, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(0, advForumStatistics.getAvgCommentsPerUser(), 0.01);
         Assert.assertEquals(0, advForumStatistics.getAvgCommentsPerPost(), 0.01);
@@ -100,7 +106,9 @@ public class AdvForumStatisticsTest {
         //When
         advForumStatistics.calculateAdvStatistics(statisticsMock);
 
-        //Then
+        //Then --corrected
+        Assert.assertEquals(100,advForumStatistics.getUsersNumber(),0.01);
+        Assert.assertEquals(40, advForumStatistics.getPostsNumber(), 0.01);
         Assert.assertEquals(10, advForumStatistics.getCommentsNumber(), 0.01);
         Assert.assertEquals(0.4, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(0.1, advForumStatistics.getAvgCommentsPerUser(), 0.01);
@@ -115,7 +123,9 @@ public class AdvForumStatisticsTest {
         //When
         advForumStatistics.calculateAdvStatistics(statisticsMock);
 
-        //Then
+        //Then --corrected
+        Assert.assertEquals(100,advForumStatistics.getUsersNumber(),0.01);
+        Assert.assertEquals(40, advForumStatistics.getPostsNumber(), 0.01);
         Assert.assertEquals(200, advForumStatistics.getCommentsNumber(), 0.01);
         Assert.assertEquals(0.4, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(2, advForumStatistics.getAvgCommentsPerUser(), 0.01);
@@ -134,6 +144,8 @@ public class AdvForumStatisticsTest {
 
         //Then
         Assert.assertEquals(0, advForumStatistics.getUsersNumber(), 0.01);
+        Assert.assertEquals(40, advForumStatistics.getPostsNumber(), 0.01);
+        Assert.assertEquals(200, advForumStatistics.getCommentsNumber(), 0.01);
         Assert.assertEquals(0, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(0, advForumStatistics.getAvgCommentsPerUser(), 0.01);
         Assert.assertEquals(5, advForumStatistics.getAvgCommentsPerPost(), 0.01);
@@ -149,6 +161,8 @@ public class AdvForumStatisticsTest {
 
         //Then
         Assert.assertEquals(100, advForumStatistics.getUsersNumber(), 0.01);
+        Assert.assertEquals(40, advForumStatistics.getPostsNumber(), 0.01);
+        Assert.assertEquals(200, advForumStatistics.getCommentsNumber(), 0.01);
         Assert.assertEquals(0.4, advForumStatistics.getAvgPostsPerUser(), 0.01);
         Assert.assertEquals(2, advForumStatistics.getAvgCommentsPerUser(), 0.01);
         Assert.assertEquals(5, advForumStatistics.getAvgCommentsPerPost(), 0.01);
