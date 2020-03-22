@@ -1,6 +1,6 @@
 package com.kodilla.stream.immutable;
 
-public class ForumUser {
+final public class ForumUser {
     private final String username;
     private final String realName;
 
