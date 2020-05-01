@@ -10,6 +10,6 @@ class None implements GameFigure {
 
   @Override
   public String toString() {
-    return "None{}";
+    return " ";
   }
 }
