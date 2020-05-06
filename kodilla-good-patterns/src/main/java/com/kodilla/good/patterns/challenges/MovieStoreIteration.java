@@ -9,8 +9,10 @@ public class MovieStoreIteration {
         MovieStore movieStore = new MovieStore();
         Map<String, List<String>> bookTitlesWithTranslations = movieStore.getMovies();
         return bookTitlesWithTranslations.entrySet().stream()
+
                 .map(booksTitles -> booksTitles.getValue())
                 .flatMap(bookTitles -> bookTitles.stream())
+                .filter(bookTitles -> bookTitles.contains("Evil") || bookTitles.contains("Zło"))
                 .collect(Collectors.joining(" ! "));
     }
 }

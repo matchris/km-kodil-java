@@ -9,6 +9,7 @@ class Game {
     private Map<FigureColor, Integer> startPoints = new HashMap<>();
     private List<Player> players = new ArrayList<>();
 
+
     public Game() {
         for (int n = 0; n < 40; n++)
             figures.add(new None());
@@ -27,10 +28,31 @@ class Game {
         return startPoints;
     }
 
+    public Map<FigureColor, Integer> getBase() {
+        return base;
+    }
+
+    //    public Integer getStartPoints(FigureColor color) {
+//        return startPoints.get(color);
+//    }
+
     private List<GameFigure> getNonesList() {
         List<GameFigure> theList = new ArrayList<>();
         for (int k = 0; k < 4; k++)
             theList.add(new None());
+        return theList;
+    }
+
+    public List<Integer> getFiguresPositions(FigureColor color) {
+        List<Integer> theList = new ArrayList<>();
+        for (int k = 0; k < 40; k++) {
+            GameFigure figure = figures.get(k);
+            if (figure instanceof Pawn) {
+                if (figure.getColor() == color) {
+                    theList.add(k);
+                }
+            }
+        }
         return theList;
     }
 
@@ -47,7 +69,6 @@ class Game {
         }
     }
 
-
     public GameFigure getFigure(int index) {
         return figures.get(index);
     }
@@ -56,7 +77,7 @@ class Game {
         figures.set(index, figure);
     }
 
-    public void introducePawn(FigureColor color, int dice) {
+    public void introducePawn(FigureColor color) {
         System.out.println("color: " + color);
         int fieldNumber = startPoints.get(color);
         GameFigure figure = figures.get(fieldNumber);
@@ -84,21 +105,59 @@ class Game {
         return base.get(color);
     }
 
-    public void move(int from, int to) {
-        if (!isMoveValid(from, to))
-            return;
-        GameFigure figure = getFigure(from);
-        FigureColor color = getFigure(to).getColor();
-        if (color != FigureColor.NONE) {
-            int number = base.get(color);
-            base.put(color, number + 1);
+    public void move(int from, int dice) {
+        if (!isMoveValid(from, dice)) {
+            System.out.println("DEBUG ruch niemożliwy");
         }
-        setFigure(to, figure);
+        GameFigure figure = getFigure(from);
+        int to = from + dice;
+        if (to < 40 + startPoints.get(figure.getColor())) {
+            System.out.println("DEBUG GameFigure figure: to%40: " + (to % 40));
+            System.out.println("DEBUG GameFigure figure: getFigure(to % 40).getColor(): " + getFigure(to % 40).getColor());
+            FigureColor color = getFigure(to % 40).getColor(); //
+            if (color != FigureColor.NONE) {
+                int number = base.get(color);
+                base.put(color, number + 1);
+            }
+            System.out.println("DEBUG GameFigure figure: TO PRAWDOPODOBNIE TUTAJ SIĘ WYSYPUJE: sprawdzamy wartość to" + to);
+            to = (to % 40); // DODANE PRZEZE MNIE MOŻLIWE ŻE DO USUNIĘCIA
+            setFigure(to, figure);
+        } else { //TUTAJ WSTAWIAMY DOMKI I COŚ SIĘ NIE ZGADZA !!!
+            homes.get(figure.getColor()).set((to - startPoints.get(figure.getColor())) % 40, figure);
+        }
         setFigure(from, new None());
+
     }
 
-    private boolean isMoveValid(int from, int to) {
-        return true;
+    private boolean isMoveValid(int fieldIndex, int dice) {
+        System.out.println("DEBUG isMoveValid:  --- JESTEŚMY w środku metody isMoveValid ---");
+        GameFigure figure = getFigure(fieldIndex);
+        System.out.println("DEBUG isMoveValid: fieldIndex: " + fieldIndex);
+        int startPoint = startPoints.get(figure.getColor());
+        System.out.println("DEBUG isMoveValid: startPoint: " + startPoints.get(figure.getColor()));
+        int endPoint = (fieldIndex + dice);
+        System.out.println("DEBUG isMoveValid: dice: " + dice);
+        System.out.println("DEBUG isMoveValid: endPoint(fieldIndex + dice): " + endPoint);
+        System.out.println("start point: " + startPoint);
+        System.out.println("end point: " + endPoint);
+        System.out.println("DEBUG isMoveValid: (endPoint - startPoint): " + (endPoint - startPoint));
+        if ((endPoint - startPoint) >= 40 && (endPoint - startPoint) < 44) {  //DODAŁEM && endPoint - startPoint < 44
+            boolean isBigger40 = (endPoint - startPoint) >= 40; // to można będzie wyrzucić po DEBUGingu, to jest moja linijka
+            System.out.println("DEBUG if: (endPoint - startPoint) >= 40 " + isBigger40);
+            return homes.get(figure.getColor()).get((endPoint - startPoint) % 40) instanceof None;
+//            GameFigure dfs = homes.get(figure.getColor()).get((endPoint - startPoint) % 40);
+//            System.out.println("DEBUG if: (endPoint - startPoint) >= 40 " + homes.get(figure.getColor()).get((endPoint - startPoint) % 40));
+        } else {
+            boolean someBooleanValue = figure.getColor() != getFigure((endPoint % 40)).getColor(); //to można będzie wyrzucić po DEBUGingu, to jest moja linijka
+            FigureColor someColor = getFigure((endPoint % 40)).getColor(); // to można będzie wyrzucić po DEBUGingu, to jest moja linijka
+            System.out.println("DEBUG else: getFigure(endPoint % 40).getColor(): " + someColor);
+            System.out.println("DEBUG else: figure.getColor() != getFigure(endPoint % 40).getColor(): " + someBooleanValue);//to można będzie wyrzucić po DEBUGingu, to jest moja linijka
+            if (figure.getColor() != getFigure((endPoint % 40)).getColor() && (endPoint - startPoint) <= 43) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     }
 
     @Override

@@ -1,8 +1,6 @@
 package com.kodilla.game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 class Application {
     public static void main(String[] args) {
@@ -13,8 +11,13 @@ class Application {
         List<Player> players = getNumberOfPlayers();
         int playerNumber = 1;
         Player currentPlayer = players.get(playerNumber);
-        System.out.println("Your name is: " + currentPlayer.getName() + ", and You play: " + game.getColor(playerNumber));
+        FigureColor currentPlayerColor = game.getColor(playerNumber);
+
+
+        System.out.println("Your name is: " + currentPlayer.getName() + ", and You play: " + currentPlayerColor);
         while (true) {
+            currentPlayerColor = game.getColor(playerNumber);
+            currentPlayer = players.get(playerNumber);
             System.out.println(game);
 
             //Wylosować ruch dla jednego gracza i wykonać
@@ -22,22 +25,79 @@ class Application {
             if (isMoveAvailable()) {
 
                 int toPosition = +dice;
-                int fromPosition = 0;
-
                 int currentPlayerNumber = currentPlayer.getPlayerNumber();
-                game.introducePawn(game.getColor(currentPlayerNumber), dice);
+                int pawnsInBase = game.getBase().get(currentPlayerColor);
+                int fromStartPosition = game.getStartPoints().get(currentPlayerColor);
+                int fromPosition = 0;
+                System.out.println("Liczba pionków w bazie przed ruchem: " + pawnsInBase);
 
-                FigureColor currentPlayerColor = game.getColor(currentPlayerNumber);
-                fromPosition = game.getStartPoints().get(currentPlayerColor);
+                //if domek number is full and dice == 6 then introduce else move()
+                //else game.figures.stream().filter(FigureColor color ->  color.getCollor == currentPlayerColor.
+                // asList().
+                //znalezienie pionka który jest wysunięty najdalej na nim wykonujemy metodę move
 
-                game.setFigure(fromPosition, new Pawn(currentPlayerColor));
-                game.move(fromPosition, toPosition);
+
+                System.out.println("DEBUG dice: " + dice + " pionki na planszy: " + !game.getFiguresPositions(currentPlayerColor).isEmpty());
+
+                //Jeśli plansza pusta to przy założeniu że Domek pusty
+
+                if (!game.getFiguresPositions(currentPlayerColor).isEmpty()) {
+                    int furthestPawnOnBoard = Collections.max(game.getFiguresPositions(currentPlayerColor));
+                    System.out.println("DEBUG furthestPawnOnBoard: " + furthestPawnOnBoard);
+                    fromPosition = furthestPawnOnBoard;  // na razie nie uwzględniamy 6
+                    System.out.println("SPRAWDZAMY FROM POSITION BO TU SIĘ WYSYPUJE: " + fromPosition + " dice " + dice + " to position: " + (fromPosition + dice));
+                    if (dice != 6) {
+                        game.move(fromPosition, dice);  //tutaj rafia from position ktora jest większa niż 40
+                    } else {
+                        int dice2 = Dice.getResult();
+                        if (dice2 != 6) {
+                            game.move(fromPosition, dice + dice2);
+                        } else {
+                            int dice3 = Dice.getResult();
+                            game.move(fromPosition, dice + dice2 + dice3);
+                        }
+                    }
+                } else if (pawnsInBase > 0 && dice == 6) { // kod wykonywany tylko w przypadku pełnej bazy
+                    System.out.println("DEBUG musi być: base > 0, dice = 6");
+                    game.introducePawn(game.getColor(currentPlayerNumber));
+                    int dice2 = Dice.getResult();
+                    if (dice2 == 6) {
+                        System.out.println("DEBUG musi być: base > 0, dice = 6, dice2 = 6");
+                        int dice3 = Dice.getResult();
+                        toPosition = dice2 + dice3;
+                        game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
+                        game.move(fromStartPosition, toPosition);
+                    } else {
+                        System.out.println("DEBUG musi być: base > 0, dice 6, dice2 != 6");
+                        toPosition = dice2;
+                        game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
+                        game.move(fromStartPosition, toPosition);
+                    }
+                }
+                System.out.println("Ruch przechodzi do kolejnego gracza");
+
+                /*else if (pawnsInBase >0){
+                    System.out.println("DEBUG musi być: base > 0, dice 6, dice2 != 6");
+                    game.introducePawn(game.getColor(currentPlayerNumber)); // zakładamy że w domkach jest porządek
+                    game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
+                    game.move(fromStartPosition, toPosition);
+                }*/
+
+
+                System.out.print("Pozycje pionków bieżącego gracza na planszy: ");
+                System.out.println(game.getFiguresPositions(currentPlayerColor));
 
 //                GameFigure figure = game.getFigure(toPosition);
                 sc.nextLine();
             }
+            playerNumber++;
+            if (playerNumber > 3)
+                playerNumber = 0;
         }
+
     }
+
+
 
 /*  ----------------- boolean isMoveAvailable(int dice) conditions ------------------- // CASE ??
 boolean move(FigureColor color, int fieldIndex, int dice){
@@ -70,14 +130,16 @@ return true;
     -------------------- end isMoveAvailable -------------------------
 */
 
-    private static boolean isSix(int dice){{
-            if(dice == 6) {
+    private static boolean isSix(int dice) {
+        {
+            if (dice == 6) {
                 return true;
             } else {
                 return false;
             }
         }
     }
+
     private static boolean isMoveAvailable() {
         return true;
     }

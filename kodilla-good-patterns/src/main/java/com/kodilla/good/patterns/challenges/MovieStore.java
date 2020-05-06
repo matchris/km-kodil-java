@@ -25,6 +25,10 @@ class MovieStore {
         deadEvilTranslations.add("Martwe Zło");
         deadEvilTranslations.add("Dead Evil");
 
+        List<String> smallEvilTranslations = new ArrayList<>();
+        deadEvilTranslations.add("Małe Zło");
+        deadEvilTranslations.add("Small Evil");
+
         List<String> findingNemoTranslation = new ArrayList<>();
         findingNemoTranslation.add("W poszukiwaniu Nemo");
         findingNemoTranslation.add("Finding Nemo");
@@ -35,6 +39,7 @@ class MovieStore {
         booksTitlesWithTranslations.put("FL", flashTranslations);
         booksTitlesWithTranslations.put("LD", deadEvilTranslations);
         booksTitlesWithTranslations.put("FN",findingNemoTranslation);
+        booksTitlesWithTranslations.put("SE",smallEvilTranslations);
 
         return booksTitlesWithTranslations;
     }
