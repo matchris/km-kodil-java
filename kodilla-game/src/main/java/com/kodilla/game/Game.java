@@ -32,10 +32,6 @@ class Game {
         return base;
     }
 
-    //    public Integer getStartPoints(FigureColor color) {
-//        return startPoints.get(color);
-//    }
-
     private List<GameFigure> getNonesList() {
         List<GameFigure> theList = new ArrayList<>();
         for (int k = 0; k < 4; k++)
@@ -106,55 +102,67 @@ class Game {
     }
 
     public void move(int from, int dice) {
-        if (!isMoveValid(from, dice)) {
-            System.out.println("DEBUG ruch niemożliwy");
-        }
         GameFigure figure = getFigure(from);
         int to = from + dice;
-        if (to < 40 + startPoints.get(figure.getColor())) {
-            System.out.println("DEBUG GameFigure figure: to%40: " + (to % 40));
-            System.out.println("DEBUG GameFigure figure: getFigure(to % 40).getColor(): " + getFigure(to % 40).getColor());
-            FigureColor color = getFigure(to % 40).getColor(); //
+        int startPoint = startPoints.get(figure.getColor());
+        int firstHomeIndex = (40 - ((40 - startPoint) % 40));
+        if (!isMoveValid(from, dice)) {
+//            return false;
+        }
+        boolean isFromFirstFourthFields = (from >= startPoint && from <= (startPoint + 3));
+        boolean isToEndsInHomes = (to >= firstHomeIndex && to <= firstHomeIndex + 3);
+        if (!isToEndsInHomes || isFromFirstFourthFields) {  //poprawione na minus
+            FigureColor color = getFigure(to%40).getColor(); //
             if (color != FigureColor.NONE) {
                 int number = base.get(color);
                 base.put(color, number + 1);
             }
             System.out.println("DEBUG GameFigure figure: TO PRAWDOPODOBNIE TUTAJ SIĘ WYSYPUJE: sprawdzamy wartość to" + to);
-            to = (to % 40); // DODANE PRZEZE MNIE MOŻLIWE ŻE DO USUNIĘCIA
-            setFigure(to, figure);
-        } else { //TUTAJ WSTAWIAMY DOMKI I COŚ SIĘ NIE ZGADZA !!!
-            homes.get(figure.getColor()).set((to - startPoints.get(figure.getColor())) % 40, figure);
+            setFigure(to%40, figure);
+//            return true;
+        } else if (!isFromFirstFourthFields) {
+            homes.get(figure.getColor()).set(to % firstHomeIndex, figure);  // poprawione na plus i przy warunku dodane za modulo %  -startPoints.get(figure.getColor())
         }
         setFigure(from, new None());
-
+//        return true;
     }
 
-    private boolean isMoveValid(int fieldIndex, int dice) {
+    boolean isOrderAtHome(FigureColor color){
+
+
+
+        return true;
+    }
+
+    public boolean isMoveValid(int fieldIndex, int dice) {
         System.out.println("DEBUG isMoveValid:  --- JESTEŚMY w środku metody isMoveValid ---");
         GameFigure figure = getFigure(fieldIndex);
         System.out.println("DEBUG isMoveValid: fieldIndex: " + fieldIndex);
         int startPoint = startPoints.get(figure.getColor());
+        int firstHomeIndex = (40 - ((40 - startPoint) % 40));
         System.out.println("DEBUG isMoveValid: startPoint: " + startPoints.get(figure.getColor()));
+        System.out.println("First Home index for color: " + figure.getColor() + " is: " + firstHomeIndex);
         int endPoint = (fieldIndex + dice);
         System.out.println("DEBUG isMoveValid: dice: " + dice);
-        System.out.println("DEBUG isMoveValid: endPoint(fieldIndex + dice): " + endPoint);
         System.out.println("start point: " + startPoint);
-        System.out.println("end point: " + endPoint);
+        System.out.println("DEBUG isMoveValid: endPoint(fieldIndex + dice): " + endPoint);
         System.out.println("DEBUG isMoveValid: (endPoint - startPoint): " + (endPoint - startPoint));
-        if ((endPoint - startPoint) >= 40 && (endPoint - startPoint) < 44) {  //DODAŁEM && endPoint - startPoint < 44
-            boolean isBigger40 = (endPoint - startPoint) >= 40; // to można będzie wyrzucić po DEBUGingu, to jest moja linijka
-            System.out.println("DEBUG if: (endPoint - startPoint) >= 40 " + isBigger40);
-            return homes.get(figure.getColor()).get((endPoint - startPoint) % 40) instanceof None;
-//            GameFigure dfs = homes.get(figure.getColor()).get((endPoint - startPoint) % 40);
-//            System.out.println("DEBUG if: (endPoint - startPoint) >= 40 " + homes.get(figure.getColor()).get((endPoint - startPoint) % 40));
+        boolean isFromFirstFourthFields = (fieldIndex >= startPoint && fieldIndex <= (startPoint + 3));
+        boolean isEndPointEndsInHomes = (endPoint >= firstHomeIndex && endPoint <= firstHomeIndex + 3);
+        System.out.println("Czy pionek stoi na pierwszych 4 startowych polach: np 30,31,32,33 dla RED " + isFromFirstFourthFields);
+        if (!isFromFirstFourthFields && isEndPointEndsInHomes) {  //Tutaj sprawdzamy status pól w domku
+            return homes.get(figure.getColor()).get((endPoint - firstHomeIndex) % firstHomeIndex) instanceof None; //tutaj zwraca czy w domku na polu stoi NONE wtedy ruch możliwy
         } else {
-            boolean someBooleanValue = figure.getColor() != getFigure((endPoint % 40)).getColor(); //to można będzie wyrzucić po DEBUGingu, to jest moja linijka
+            boolean someBooleanValue = figure.getColor() != getFigure((endPoint % 40)).getColor(); //to można będzie wyrzucić po DEBUGingu, to jest moja linijk
             FigureColor someColor = getFigure((endPoint % 40)).getColor(); // to można będzie wyrzucić po DEBUGingu, to jest moja linijka
             System.out.println("DEBUG else: getFigure(endPoint % 40).getColor(): " + someColor);
             System.out.println("DEBUG else: figure.getColor() != getFigure(endPoint % 40).getColor(): " + someBooleanValue);//to można będzie wyrzucić po DEBUGingu, to jest moja linijka
-            if (figure.getColor() != getFigure((endPoint % 40)).getColor() && (endPoint - startPoint) <= 43) {
+            if (figure.getColor() != getFigure((endPoint % 40)).getColor()) { //SPRAWDZAMY CZY NA DOCELOWYM POLU STOI INNA FIGURA lub NONE
+                System.out.println("Tutaj MUSIMY SPRAWDZIĆ CZY TO SIĘ WOGÓLE WYŚWIETLI BO JAK BĘDZIE NONE TO MOŻE TU NIE WEJŚĆ");
+                System.out.println("A wejdzie tylko gdy będzie inny color");
                 return true;
             } else {
+                System.out.println("ruch nie jest możliwy na polu stoi ");
                 return false;
             }
         }

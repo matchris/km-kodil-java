@@ -25,6 +25,8 @@ class Application {
             if (isMoveAvailable()) {
 
                 int toPosition = +dice;
+                int dice2 = Dice.getResult();
+                int dice3 = Dice.getResult();
                 int currentPlayerNumber = currentPlayer.getPlayerNumber();
                 int pawnsInBase = game.getBase().get(currentPlayerColor);
                 int fromStartPosition = game.getStartPoints().get(currentPlayerColor);
@@ -37,53 +39,79 @@ class Application {
                 //znalezienie pionka który jest wysunięty najdalej na nim wykonujemy metodę move
 
 
-                System.out.println("DEBUG dice: " + dice + " pionki na planszy: " + !game.getFiguresPositions(currentPlayerColor).isEmpty());
+                System.out.println("dice: " + dice + " dice2: " + dice2 + " dice3: " + dice3 + " :CZY pionki na planszy: " + !game.getFiguresPositions(currentPlayerColor).isEmpty());
 
-                //Jeśli plansza pusta to przy założeniu że Domek pusty
 
-                if (!game.getFiguresPositions(currentPlayerColor).isEmpty()) {
-                    int furthestPawnOnBoard = Collections.max(game.getFiguresPositions(currentPlayerColor));
+                System.out.println("kolor bieżącego gracza: " + currentPlayerColor);
+                boolean isFigureOnBoard = !game.getFiguresPositions(currentPlayerColor).isEmpty();
+                if (isFigureOnBoard) {
+                    List<Integer> figuresOnBoard = game.getFiguresPositions(currentPlayerColor);
+                    Optional<Integer> firstPawnOnBoard = figuresOnBoard.stream().findFirst();
+                    System.out.println("first Pawn On Board" + firstPawnOnBoard.get());  //dodałem do firstPawnOnBoard.get
+                    int furthestPawnOnBoard = Collections.max(figuresOnBoard);
                     System.out.println("DEBUG furthestPawnOnBoard: " + furthestPawnOnBoard);
-                    fromPosition = furthestPawnOnBoard;  // na razie nie uwzględniamy 6
-                    System.out.println("SPRAWDZAMY FROM POSITION BO TU SIĘ WYSYPUJE: " + fromPosition + " dice " + dice + " to position: " + (fromPosition + dice));
+                    fromPosition = furthestPawnOnBoard;
                     if (dice != 6) {
-                        game.move(fromPosition, dice);  //tutaj rafia from position ktora jest większa niż 40
+                        System.out.println("Dice w pierwszej pętli gdy pionki są na planszy dice: " + dice);
+                        game.move(fromPosition, dice);
                     } else {
-                        int dice2 = Dice.getResult();
                         if (dice2 != 6) {
-                            game.move(fromPosition, dice + dice2);
+                            System.out.println("Dice w drugiej pętli gdy pionki są na planszy dice: " + dice + " dice2: " + dice2);
+                            boolean isNotValid = !game.isMoveValid(fromPosition, dice + dice2); //to może będzie trzeba wyrzucić
+                            System.out.println("isNotValid jeśli true to powinno ustawić nowego pionka i tyle");
+
+                            if (isNotValid && pawnsInBase > 0) {  //tutaj musimy sprawdzić warunek jeśli ruch jest niemożliwy to wyprowadź pionka
+                                game.introducePawn(game.getColor(currentPlayerNumber));
+                                game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
+                                game.move(fromStartPosition, dice2);
+                            } else {
+                                System.out.println("OSTATNI ELSE DLA ELSE");
+                                game.move(fromPosition, dice + dice2);
+                            }
+//
+//                            System.out.println("Dice w trzeciej pętli gdy pionki są na planszy dice: " + dice + " dice2: " + dice2 + " dice3: " + dice3);
+//                            game.introducePawn(game.getColor(currentPlayerNumber));
+//                            game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
+//                            game.move(fromStartPosition, dice2 + dice3);
                         } else {
-                            int dice3 = Dice.getResult();
-                            game.move(fromPosition, dice + dice2 + dice3);
+                            boolean isNotValid = !game.isMoveValid(fromPosition, dice + dice2 + dice3);
+                            if (isNotValid && pawnsInBase > 0) {  //tutaj musimy sprawdzić warunek jeśli ruch jest niemożliwy to wyprowadź pionka
+                                game.introducePawn(game.getColor(currentPlayerNumber));
+                                game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
+                                game.move(fromStartPosition, dice2+dice3);
+                            } else {
+                                System.out.println("OSTATNI ELSE DLA ELSE");
+                                game.move(fromPosition, dice + dice2 + dice3);
+                            }
                         }
                     }
-                } else if (pawnsInBase > 0 && dice == 6) { // kod wykonywany tylko w przypadku pełnej bazy
-                    System.out.println("DEBUG musi być: base > 0, dice = 6");
-                    game.introducePawn(game.getColor(currentPlayerNumber));
-                    int dice2 = Dice.getResult();
-                    if (dice2 == 6) {
-                        System.out.println("DEBUG musi być: base > 0, dice = 6, dice2 = 6");
-                        int dice3 = Dice.getResult();
-                        toPosition = dice2 + dice3;
-                        game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
+
+                } else if (pawnsInBase > 0 && dice == 6 || dice2 == 6 || dice3 == 6) { // kod wykonywany tylko w przypadku pustej planszy i porządku w domku (zakładamy że jest)
+
+                    if (dice == 6) {
+                        System.out.println("PĘTLA 1.0");
+                        if (dice2 != 6) {
+                            System.out.println("PĘTLA 1.1");
+                            toPosition = dice2;
+                            game.introducePawn(game.getColor(currentPlayerNumber));
+                            game.move(fromStartPosition, toPosition);
+                        } else {
+                            System.out.println("PĘTLA 1.2");
+                            toPosition = dice2 + dice3;
+                            game.introducePawn(game.getColor(currentPlayerNumber));
+                            game.move(fromStartPosition, toPosition);
+                        }
+                    } else if (dice2 == 6) {
+                        System.out.println("PĘTLA 2.0");
+                        toPosition = dice3;
+                        game.introducePawn(game.getColor(currentPlayerNumber));
                         game.move(fromStartPosition, toPosition);
                     } else {
-                        System.out.println("DEBUG musi być: base > 0, dice 6, dice2 != 6");
-                        toPosition = dice2;
-                        game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
-                        game.move(fromStartPosition, toPosition);
+                        System.out.println("PĘTLA 3.0");
+                        game.introducePawn(game.getColor(currentPlayerNumber));
                     }
                 }
                 System.out.println("Ruch przechodzi do kolejnego gracza");
-
-                /*else if (pawnsInBase >0){
-                    System.out.println("DEBUG musi być: base > 0, dice 6, dice2 != 6");
-                    game.introducePawn(game.getColor(currentPlayerNumber)); // zakładamy że w domkach jest porządek
-                    game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
-                    game.move(fromStartPosition, toPosition);
-                }*/
-
-
                 System.out.print("Pozycje pionków bieżącego gracza na planszy: ");
                 System.out.println(game.getFiguresPositions(currentPlayerColor));
 
@@ -109,22 +137,6 @@ if notEmpty(endPoint) hitEnemyFigure(endPoint);
 setFigure(..., endPoint)
 return true;
 
-
- }
-
-
-  dla jakich pionków ruch możliwy i jeśli dla więcej niż jeden
-  to wyświetlić je i dać wybór którym pionkiem wykonać ruch (czy nie należy pionki ponumerować?)
-
-    IF pionekJestNaPlanszy() && (gdy nie skończy ruchu:   //plansza to też pola domku
-        1.  poza POLEM_KOŃCOWYM, czyli (43 - (bieżaca pozycja - StartPoints)) > = 0  //getCurrentPosition
-            ||
-        2. na polu z własnym pionkiem
-            ||
-        //3. na polu StartPoints innego gracza na którym stoi jego pionek) to niekoniecznie
-    ELSE IF isBaseEmpty() == false
-     // introducePawn()
-     Else IF pawnsAtHomesOnTheLastCells == TRUE  przedziale (POLE KOŃCOWE - (4 - pionkiWBazie), POLE KOŃCOWE)
 
 
     -------------------- end isMoveAvailable -------------------------

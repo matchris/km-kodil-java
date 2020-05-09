@@ -1,31 +1,31 @@
-import com.kodilla.good.patterns.challenges.allegro.InformationService;
-import com.kodilla.good.patterns.challenges.allegro.PurchaseRepository;
-import com.kodilla.good.patterns.challenges.allegro.PurchaseService;
+package com.kodilla.good.patterns.challenges.allegro;
+
+
 
 public class ProductOrderService {
 
     private InformationService informationService;
-    private PurchaseService purchaseService;
-    private PurchaseRepository purchaseRepository;
+    private OrderService orderService;
+    private OrderRepository orderRepository;
 
     public ProductOrderService(final InformationService informationService,
-                               final PurchaseService purchaseService,
-                               final PurchaseRepository purchaseRepository) {
+                               final OrderService orderService,
+                               final OrderRepository orderRepository) {
         this.informationService = informationService;
-        this.purchaseService = purchaseService;
-        this.purchaseRepository = purchaseRepository;
+        this.orderService = orderService;
+        this.orderRepository = orderRepository;
     }
 
-    public PurchaseDto process(final PurchaseRequest purchaseRequest) {
-        boolean isPurchased = purchaseService.purchase(purchaseRequest.getUser(), purchaseRequest.getQuantity(),
-                purchaseRequest.getProduct());
+    public OrderDto order(final OrderRequest orderRequest) {
+        boolean isOrdered = orderService.order(orderRequest.getUser(), orderRequest.getProduct(), orderRequest.getOrderTime())
+                ;
 
-        if(isPurchased) {
-            informationService.inform(purchaseRequest.getUser());
-            purchaseRepository.createDataToRepository(purchaseRequest.getUser(), purchaseRequest.getQuantity(), purchaseRequest.getProduct());
-            return new PurchaseDto(purchaseRequest.getUser(), true);
+        if(isOrdered) {
+            informationService.inform(orderRequest.getUser());
+            orderRepository.createOrderProduct(orderRequest.getUser(),orderRequest.getProduct(),orderRequest.getOrderTime());
+            return new OrderDto(orderRequest.getUser(), true);
         } else {
-            return new PurchaseDto(purchaseRequest.getUser(), false);
+            return new OrderDto(orderRequest.getUser(), false);
         }
     }
 }
