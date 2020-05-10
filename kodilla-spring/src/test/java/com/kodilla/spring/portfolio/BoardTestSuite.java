@@ -18,7 +18,7 @@ public class BoardTestSuite {
     public void findingWhatIsWrong(){
         //Given
         ApplicationContext context =
-                new AnnotationConfigApplicationContext("com.kodilla.spring.portfolio");
+                new AnnotationConfigApplicationContext("com.kodilla.spring");
 
         //When & Then
         System.out.println("===== Beans list: ==== >>");
@@ -30,16 +30,18 @@ public class BoardTestSuite {
     @Test
     public void testTaskAdd(){
         //Given
-        ApplicationContext context = new AnnotationConfigApplicationContext("com.kodilla.spring.portfolio");
+        ApplicationContext context = new AnnotationConfigApplicationContext(BoardConfig.class);
         Board board = (Board) context.getBean("board");
-        //When
+        //When & Then
         board.getToDoList().getTasks().add("doing task1");
-        board.getInProgressList().getTasks().add("in progress task1");
-        board.getDoneList().getTasks().add("done task1");
-        //Then
         System.out.println(board.getToDoList().getTasks().add("doing task1"));
+        board.getInProgressList().getTasks().add("in progress task1");
         System.out.println(board.getInProgressList().getTasks().add("in progress task1"));
+        board.getDoneList().getTasks().add("done task1");
         System.out.println(board.getDoneList().getTasks().add("done task1"));
+
+        
+
 
 
     }
