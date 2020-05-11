@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 @Configuration
 public class BoardConfig {
@@ -21,7 +20,7 @@ public class BoardConfig {
     TaskList doneList;
 
     @Bean
-    public Board getTaskList() {
+    public Board getBoard() {
         return new Board(toDoList, inProgressList, doneList);
     }
 
@@ -38,6 +37,5 @@ public class BoardConfig {
     public TaskList getDoneList(){
         return new TaskList();
     }
-
 
 }
