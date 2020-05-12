@@ -41,24 +41,24 @@ public class ChineseBoard extends Application {
             grid.getColumnConstraints().add(new ColumnConstraints(80));
         }
 
-        ImageView img = new ImageView(ypHomeBaseStart);
-        ImageView img1 = new ImageView(rpHomeBaseStart);
-        ImageView img2 = new ImageView(gpHomeBaseStart);
-        ImageView noneImage = new ImageView(field);
-        pawns.getChildren().add(img);
-
-        grid.add(img, 5, 5, 1, 1);
-        grid.add(img1, 0, 0, 1, 1);
-        grid.add(img2, 1, 1, 1, 1);
-        grid.add(noneImage,3,3,1,1);
+//        ImageView img = new ImageView(ypHomeBaseStart);
+//        ImageView img1 = new ImageView(rpHomeBaseStart);
+//        ImageView img2 = new ImageView(gpHomeBaseStart);
+//        ImageView noneImage = new ImageView(field);
+//        pawns.getChildren().add(img);
+//
+//        grid.add(img, 5, 5, 1, 1);
+//        grid.add(img1, 0, 0, 1, 1);
+//        grid.add(img2, 1, 1, 1, 1);
+//        grid.add(noneImage,3,3,1,1);
 
         grid.setGridLinesVisible(true);
         Scene scene = new Scene(grid, 880, 880, Color.BLACK);
         primaryStage.setTitle("Chinese");
         primaryStage.setScene(scene);
-//        Game game = new Game();
-//        GameGFX gameGFX = new GameGFX(game,grid);
-//        gameGFX.display();
+        Game game = new Game();
+        GameGFX gameGFX = new GameGFX(game,grid);
+        gameGFX.display();
         primaryStage.show();
     }
 }

@@ -18,6 +18,11 @@ class None implements GameFigure {
   }
 
   @Override
+  public Image getImageBHS() {
+    return null;
+  }
+
+  @Override
   public String toString() {
     return " ";
   }
