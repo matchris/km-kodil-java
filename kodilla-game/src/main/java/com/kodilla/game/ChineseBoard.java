@@ -56,9 +56,9 @@ public class ChineseBoard extends Application {
         Scene scene = new Scene(grid, 880, 880, Color.BLACK);
         primaryStage.setTitle("Chinese");
         primaryStage.setScene(scene);
-        Game game = new Game();
-        GameGFX gameGFX = new GameGFX(game,grid);
-        gameGFX.display();
+//        Game game = new Game();
+//        GameGFX gameGFX = new GameGFX(game,grid);
+//        gameGFX.display();
         primaryStage.show();
     }
 }
