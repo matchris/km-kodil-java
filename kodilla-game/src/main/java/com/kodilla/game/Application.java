@@ -40,7 +40,8 @@ class Application {
 
 
                 System.out.println("dice: " + dice + " dice2: " + dice2 + " dice3: " + dice3 + " :CZY pionki na planszy: " + !game.getFiguresPositions(currentPlayerColor).isEmpty());
-
+                ArrayList<Integer> someTestArrayList = game.homesToIntList(game.getHomes());
+                System.out.println("someTestArrayList: " + someTestArrayList);
 
                 System.out.println("kolor bieżącego gracza: " + currentPlayerColor);
                 boolean isFigureOnBoard = !game.getFiguresPositions(currentPlayerColor).isEmpty();
@@ -78,7 +79,7 @@ class Application {
                             if (isNotValid && pawnsInBase > 0) {  //tutaj musimy sprawdzić warunek jeśli ruch jest niemożliwy to wyprowadź pionka
                                 game.introducePawn(game.getColor(currentPlayerNumber));
                                 game.setFigure(fromStartPosition, new Pawn(currentPlayerColor));
-                                game.move(fromStartPosition, dice2+dice3);
+                                game.move(fromStartPosition, dice2 + dice3);
                             } else {
                                 System.out.println("OSTATNI ELSE DLA ELSE");
                                 game.move(fromPosition, dice + dice2 + dice3);
@@ -86,7 +87,7 @@ class Application {
                         }
                     }
 
-                } else if (pawnsInBase > 0 && dice == 6 || dice2 == 6 || dice3 == 6) { // kod wykonywany tylko w przypadku pustej planszy i porządku w domku (zakładamy że jest)
+                } else if (pawnsInBase > 0 && (dice == 6 || dice2 == 6 || dice3 == 6)) { // kod wykonywany tylko w przypadku pustej planszy i porządku w domku (zakładamy że jest)
 
                     if (dice == 6) {
                         System.out.println("PĘTLA 1.0");

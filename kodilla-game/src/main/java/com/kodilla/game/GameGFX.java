@@ -5,6 +5,7 @@ import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,14 +16,11 @@ public class GameGFX {
     public GameGFX(Game game, GridPane grid) {
         this.game = game;
         this.grid = grid;
+
     }
 
     public void display() {
         grid.getChildren().clear();
-//        for (int n = 0; n < 11; n++) {
-//            grid.getRowConstraints().add(new RowConstraints(80));
-//            grid.getColumnConstraints().add(new ColumnConstraints(80));
-//        }
         for (int n = 0; n < 40; n++) {
             GameFigure f = game.getFigure(n);
             System.out.println("for n = " + n + " f.getColor: " + f.getColor());
@@ -32,43 +30,97 @@ public class GameGFX {
             }
             Coord coord = getCoord(n);
             System.out.println("coord: n = " + n + " : " + coord);
-            if (coord != null && n%10!=0)
+            if (coord != null)
                 grid.add(iv, coord.getX(), coord.getY());
         }
+        //Grafika na pola startowe
+//        for (int k = 0; k < 4; k++) {
+//            FigureColor currentPlayerColor = game.getColor(k);
+//            int pawnsInBase = game.getBase().get(currentPlayerColor);
+//            GameFigure startsColor = new Pawn(Game.getColor(k));
+//            ImageView starts = new ImageView(startsColor.getImageBHS());
+//            Coord coord = getCoord(72 + k);
+//            grid.add(starts, coord.getX(), coord.getY());
+//
+//        }
+
 
         for (int k = 0; k < 4; k++) {
+            FigureColor currentPlayerColor = game.getColor(k);
+            int pawnsInBase = game.getBase().get(currentPlayerColor);
             GameFigure startsColor = new Pawn(Game.getColor(k));
-            ImageView starts = new ImageView(startsColor.getImageBHS());
+//            ImageView starts = new ImageView(startsColor.getImageBHS());
             Coord coord = getCoord(72 + k);
-            grid.add(starts, coord.getX(), coord.getY());
-            for (int n = 0; n < 4; n++) {
+//            grid.add(starts, coord.getX(), coord.getY());
+            for (int n = 0; n < pawnsInBase; n++) {
                 GameFigure plColor = new Pawn(Game.getColor(k));
                 ImageView bases = new ImageView(plColor.getImage());
-                ImageView homes = new ImageView(plColor.getImageBHS());
                 if (k == 0) {
                     coord = getCoord(n + 52);
-                    Coord coordHomes = getCoord(n + 68);
                     grid.add(bases, coord.getX(), coord.getY());
-                    grid.add(homes, coordHomes.getX(), coordHomes.getY());
                 } else if (k == 1) {
                     coord = getCoord(n + 40);
-                    Coord coordHomes = getCoord(n + 56);
                     grid.add(bases, coord.getX(), coord.getY());
-                    grid.add(homes, coordHomes.getX(), coordHomes.getY());
                 } else if (k == 2) {
                     coord = getCoord(n + 44);
-                    Coord coordHomes = getCoord(n + 60);
                     grid.add(bases, coord.getX(), coord.getY());
-                    grid.add(homes, coordHomes.getX(), coordHomes.getY());
-
                 } else {
                     coord = getCoord(n + 48);
-                    Coord coordHomes = getCoord(n + 64);
                     grid.add(bases, coord.getX(), coord.getY());
-                    grid.add(homes, coordHomes.getX(), coordHomes.getY());
                 }
             }
         }
+
+        for (int k = 0; k < 4; k++) {
+            for (int n = 0; n < 4; n++) {
+                GameFigure plColor = new Pawn(Game.getColor(k));
+                ImageView homesBHS = new ImageView(plColor.getImageBHS());
+                if (k == 0) {
+                    Coord coordHomes = getCoord(n + 68);
+                    grid.add(homesBHS, coordHomes.getX(), coordHomes.getY());
+                } else if (k == 1) {
+                    Coord coordHomes = getCoord(n + 56);
+                    grid.add(homesBHS, coordHomes.getX(), coordHomes.getY());
+                } else if (k == 2) {
+                    Coord coordHomes = getCoord(n + 60);
+                    grid.add(homesBHS, coordHomes.getX(), coordHomes.getY());
+                } else {
+                    Coord coordHomes = getCoord(n + 64);
+                    grid.add(homesBHS, coordHomes.getX(), coordHomes.getY());
+                }
+            }
+        }
+
+        for (int k = 0; k < 4; k++) {
+            for (int n = 0; n < 4; n++) {
+                GameFigure plColor = new Pawn(Game.getColor(k));
+                ImageView iv = new ImageView(plColor.getImage());
+                ArrayList<Integer> listOfEnteredPawns = game.homesToIntList(game.getHomes());
+                System.out.println("list of Entered Pawns" + listOfEnteredPawns);
+                if (k == 0) {
+                    if(listOfEnteredPawns.get(n+0)==1) {
+                        Coord coordHomes = getCoord(n + 68);
+                        grid.add(iv, coordHomes.getX(), coordHomes.getY());
+                    }
+                } else if (k == 1) {
+                    if(listOfEnteredPawns.get(n+8)==1) {
+                        Coord coordHomes = getCoord(n + 56);
+                        grid.add(iv, coordHomes.getX(), coordHomes.getY());
+                    }
+                } else if (k == 2) {
+                    if(listOfEnteredPawns.get(n+12)==1) {
+                        Coord coordHomes = getCoord(n + 60);
+                        grid.add(iv, coordHomes.getX(), coordHomes.getY());
+                    }
+                } else {
+                    if(listOfEnteredPawns.get(n+4)==1) {
+                        Coord coordHomes = getCoord(n + 64);
+                        grid.add(iv, coordHomes.getX(), coordHomes.getY());
+                    }
+                }
+            }
+        }
+
     }
 
     private Coord getCoord(int n) {
@@ -144,15 +196,15 @@ public class GameGFX {
         coords.put(62, new Coord(5, 3));
         coords.put(63, new Coord(5, 4));
         //red houses
-        coords.put(64, new Coord(6, 5));
-        coords.put(65, new Coord(7, 5));
-        coords.put(66, new Coord(8, 5));
-        coords.put(67, new Coord(9, 5));
+        coords.put(64, new Coord(9, 5));
+        coords.put(65, new Coord(8, 5));
+        coords.put(66, new Coord(7, 5));
+        coords.put(67, new Coord(6, 5));
         //yellow houses
-        coords.put(68, new Coord(5, 6));
-        coords.put(69, new Coord(5, 7));
-        coords.put(70, new Coord(5, 8));
-        coords.put(71, new Coord(5, 9));
+        coords.put(68, new Coord(5, 9));
+        coords.put(69, new Coord(5, 8));
+        coords.put(70, new Coord(5, 7));
+        coords.put(71, new Coord(5, 6));
         //start points yellow, blue, green, red
         coords.put(72, new Coord(4, 10));
         coords.put(73, new Coord(0, 4));

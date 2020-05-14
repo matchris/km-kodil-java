@@ -1,10 +1,12 @@
 package com.kodilla.game;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 class Game {
     private List<GameFigure> figures = new ArrayList<>();
-    private Map<FigureColor, List<GameFigure>> homes = new HashMap<>();
+    private Map<FigureColor, List<GameFigure>> homes = new TreeMap<>();
     private Map<FigureColor, Integer> base = new HashMap<>();
     private Map<FigureColor, Integer> startPoints = new HashMap<>();
     private List<Player> players = new ArrayList<>();
@@ -23,6 +25,27 @@ class Game {
         startPoints.put(FigureColor.GREEN, 20);
         startPoints.put(FigureColor.RED, 30);
     }
+
+    public Map<FigureColor, List<GameFigure>> getHomes() {
+        return homes;
+    }
+
+    public ArrayList<Integer> homesToIntList(Map<FigureColor, List<GameFigure>> homes) {
+        ArrayList<GameFigure> valueList = null;
+        ArrayList<Integer> placesAtHome = new ArrayList<>();
+        for (Map.Entry<FigureColor, List<GameFigure>> element : homes.entrySet()) {
+            valueList = new ArrayList<>(element.getValue());
+                for (int i = 0; i < 4; i++) {
+                    if (valueList.get(i) instanceof Pawn) {
+                        placesAtHome.add(1);
+                    } else {
+                        placesAtHome.add(0);
+                    }
+                }
+        }
+        return placesAtHome;
+    }
+
 
     public Map<FigureColor, Integer> getStartPoints() {
         return startPoints;
@@ -107,18 +130,18 @@ class Game {
         int startPoint = startPoints.get(figure.getColor());
         int firstHomeIndex = (40 - ((40 - startPoint) % 40));
         if (!isMoveValid(from, dice)) {
-//            return false;
+            return;
         }
         boolean isFromFirstFourthFields = (from >= startPoint && from <= (startPoint + 3));
         boolean isToEndsInHomes = (to >= firstHomeIndex && to <= firstHomeIndex + 3);
         if (!isToEndsInHomes || isFromFirstFourthFields) {  //poprawione na minus
-            FigureColor color = getFigure(to%40).getColor(); //
+            FigureColor color = getFigure(to % 40).getColor(); //
             if (color != FigureColor.NONE) {
                 int number = base.get(color);
                 base.put(color, number + 1);
             }
             System.out.println("DEBUG GameFigure figure: TO PRAWDOPODOBNIE TUTAJ SIĘ WYSYPUJE: sprawdzamy wartość to" + to);
-            setFigure(to%40, figure);
+            setFigure(to % 40, figure);
 //            return true;
         } else if (!isFromFirstFourthFields) {
             homes.get(figure.getColor()).set(to % firstHomeIndex, figure);  // poprawione na plus i przy warunku dodane za modulo %  -startPoints.get(figure.getColor())
@@ -127,8 +150,7 @@ class Game {
 //        return true;
     }
 
-    boolean isOrderAtHome(FigureColor color){
-
+    boolean isOrderAtHome(FigureColor color) {
 
 
         return true;
@@ -147,9 +169,12 @@ class Game {
         System.out.println("start point: " + startPoint);
         System.out.println("DEBUG isMoveValid: endPoint(fieldIndex + dice): " + endPoint);
         System.out.println("DEBUG isMoveValid: (endPoint - startPoint): " + (endPoint - startPoint));
+        boolean isEndMoveFarestThanBoard = (endPoint%43>(startPoint+43)%43 );
         boolean isFromFirstFourthFields = (fieldIndex >= startPoint && fieldIndex <= (startPoint + 3));
         boolean isEndPointEndsInHomes = (endPoint >= firstHomeIndex && endPoint <= firstHomeIndex + 3);
         System.out.println("Czy pionek stoi na pierwszych 4 startowych polach: np 30,31,32,33 dla RED " + isFromFirstFourthFields);
+        if(endPoint-startPoint>43)
+            return false;
         if (!isFromFirstFourthFields && isEndPointEndsInHomes) {  //Tutaj sprawdzamy status pól w domku
             return homes.get(figure.getColor()).get((endPoint - firstHomeIndex) % firstHomeIndex) instanceof None; //tutaj zwraca czy w domku na polu stoi NONE wtedy ruch możliwy
         } else {
