@@ -41,9 +41,29 @@ public class ChineseBoard extends Application {
         BackgroundSize backgroundSize = new BackgroundSize(880, 880, true, true, true, false);
         BackgroundImage backgroundImage = new BackgroundImage(imageback, BackgroundRepeat.REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.CENTER, backgroundSize);
         Background background = new Background(backgroundImage);
+        Button btn = new Button();
+        Button btn1 = new Button();
+        btn.setText("Second button");
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("bla");
+            }
+        });
+        btn.setText("Roll the dice");
+        btn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                System.out.println("Hello world");
+            }
+        });
+        StackPane root = new StackPane();
+        root.getChildren().add(btn);
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
         grid.setBackground(background);
+
+
 
         //BEGIN----------->WYŚWIETLANIE KOSTKI<-------------------------
         Label message1 = new Label("Press to roll dice");
@@ -67,6 +87,7 @@ public class ChineseBoard extends Application {
         Scene scene = new Scene(grid, 880, 880, Color.BLACK);
         primaryStage.setTitle("Chinese");
         primaryStage.setScene(scene);
+        primaryStage.setScene(new Scene(root,300,250));
 
         Game game = new Game();
 
