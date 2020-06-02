@@ -1,9 +1,17 @@
 package com.kodilla.game;
 
+import javafx.geometry.HPos;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.geometry.VPos;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +20,10 @@ import java.util.Map;
 public class GameGFX {
     private final Game game;
     private final GridPane grid;
+    private Label resultDice;
+    private ImageView viewDice = new ImageView();
+    private Pane pane;
+
 
     public GameGFX(Game game, GridPane grid) {
         this.game = game;
@@ -95,6 +107,7 @@ public class GameGFX {
             for (int n = 0; n < 4; n++) {
                 GameFigure plColor = new Pawn(Game.getColor(k));
                 ImageView iv = new ImageView(plColor.getImage());
+//                iv.setOnDragDetected();
                 ArrayList<Integer> listOfEnteredPawns = game.homesToIntList(game.getHomes());
                 System.out.println("list of Entered Pawns" + listOfEnteredPawns);
                 if (k == 0) {
@@ -120,6 +133,22 @@ public class GameGFX {
                 }
             }
         }
+        Label message1 = new Label("Press to roll dice");
+        resultDice = new Label();
+        Button startButton = new Button("Roll dice!");
+        startButton.setOnAction(event -> {
+            int rollResult = Dice.getResult();
+            DiceImage diceImage = new DiceImage();
+            Image dicePic1;
+            diceImage.setImage(rollResult);
+            dicePic1 = diceImage.getImage();
+            viewDice = new ImageView(dicePic1);
+            resultDice.setText(" " + rollResult);
+        });
+        VBox vbox = new VBox(10, message1, startButton,/* hbox,*/ resultDice, viewDice);
+        vbox.setPadding(new Insets(15));
+        vbox.setAlignment(Pos.CENTER);
+
 
     }
 
