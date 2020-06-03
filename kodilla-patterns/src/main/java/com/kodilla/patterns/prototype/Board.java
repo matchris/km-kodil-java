@@ -1,7 +1,6 @@
 package com.kodilla.patterns.prototype;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public final class Board extends Prototype {
