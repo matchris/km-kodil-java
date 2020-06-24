@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Transactional
 public class InvoiceDaoTestSuite {
     @Autowired
     InvoiceDao invoiceDao;
@@ -33,10 +35,18 @@ public class InvoiceDaoTestSuite {
         Item item2 = new Item(product2, new BigDecimal(20), 50, new BigDecimal(1000));
         Item item3 = new Item(product3, new BigDecimal(15), 10, new BigDecimal(150));
 
+        product1.getItems().add(item1);
+        product2.getItems().add(item2);
+        product3.getItems().add(item3);
+
         Invoice invoice1 = new Invoice("2020.06.21/CA");
         invoice1.getItems().add(item1);
         invoice1.getItems().add(item2);
         invoice1.getItems().add(item3);
+
+        item1.setInvoice(invoice1);
+        item2.setInvoice(invoice1);
+        item3.setInvoice(invoice1);
         //When dao save
 
         productDao.save(product1);
@@ -47,6 +57,9 @@ public class InvoiceDaoTestSuite {
         int idProduct2 = product1.getId();
         int idProduct3 = product1.getId();
 
+        invoiceDao.save(invoice1);
+        int idInvoice1 = invoice1.getId();
+
         itemDao.save(item1);
         itemDao.save(item2);
         itemDao.save(item3);
@@ -54,9 +67,6 @@ public class InvoiceDaoTestSuite {
         int idItem1 = item1.getId();
         int idItem2 = item1.getId();
         int idItem3 = item1.getId();
-
-        invoiceDao.save(invoice1);
-        int idInvoice1 = invoice1.getId();
 
         //Then asserts
 
@@ -69,15 +79,16 @@ public class InvoiceDaoTestSuite {
         Assert.assertNotEquals(0,idItem3);
 
         //CleanUp
-        productDao.deleteById(idProduct1);
-        productDao.deleteById(idProduct2);
-        productDao.deleteById(idProduct3);
 
-        itemDao.deleteById(idItem1);
-        itemDao.deleteById(idItem2);
-        itemDao.deleteById(idItem3);
+        itemDao.delete(item1);
+        itemDao.delete(item2);
+        itemDao.delete(item3);
 
-        invoiceDao.deleteById(idInvoice1);
+        productDao.delete(product1);
+        productDao.delete(product2);
+        productDao.delete(product3);
+
+        invoiceDao.delete(invoice1);
     }
 
 }
