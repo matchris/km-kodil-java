@@ -1,8 +1,7 @@
-package com.kodilla.hibernate.maytomany.dao;
+package com.kodilla.hibernate.manytomany.dao;
 
 import com.kodilla.hibernate.manytomany.Company;
 import com.kodilla.hibernate.manytomany.Employee;
-import com.kodilla.hibernate.manytomany.dao.CompanyDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,11 +9,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class CompanyDaoTestSuite {
     @Autowired
     CompanyDao companyDao;
+
+    @Autowired
+    EmployeeDao employeeDao;
 
     @Test
     public void testSaveManyToMany() {
@@ -51,18 +55,41 @@ public class CompanyDaoTestSuite {
         companyDao.save(doesntMatter);
         int doesntMatterId = doesntMatter.getId();
 
+        List<Employee> smithsList = employeeDao.retrieveEmployeeLastname("Smith");
+        int numberOfSmiths = smithsList.size();
+//        List<Employee> partOfLastNameList = employeeDao.retrieveByEmployeePartOfLastName("alsk");
+//        int numberOfPartLastNames = partOfLastNameList.size();
+        List<Company> namesCompaniesLongerThan5 = companyDao.retrieveCompanyLongerThanSomeNumber(5);
+        int numberOfCompaniesWithNamesLongerThan5 = namesCompaniesLongerThan5.size();
+//        List<Company> namesCompaniesIncludedMatt = companyDao.retrieveCompanyContainingAnyPartOfTextInName("Matt");
+//        int numberOfCompaniesWithNamesIncludedMatt = namesCompaniesIncludedMatt.size();
+        List<Company> namesWithFirstThreeLetters = companyDao.retrieveCompanyFirstThreeLettersOfName("Dat");
+        int numberOfCompaniesWithNamesWithFirstThreeLetters = namesWithFirstThreeLetters.size();
+
+
         //Then
         Assert.assertNotEquals(0, dataMinesId);
         Assert.assertNotEquals(0, microsoftCorpId);
         Assert.assertNotEquals(0, doesntMatterId);
 
+        Assert.assertNotEquals(0, numberOfSmiths);
+//        Assert.assertNotEquals(0,numberOfPartLastNames);
+        Assert.assertNotEquals(0,numberOfCompaniesWithNamesLongerThan5);
+//        Assert.assertNotEquals(0,numberOfCompaniesWithNamesIncludedMatt);
+        Assert.assertNotEquals(0,numberOfCompaniesWithNamesWithFirstThreeLetters);
+
         //CleanUp
-//        try {
-//            companyDao.deleteById(dataMinesId);
-//            companyDao.deleteById(microsoftCorpId);
-//            companyDao.deleteById(doesntMatterId);
-//        } catch (Exception e) {
-//            //do nothing
-//        }
+        try {
+            companyDao.deleteById(dataMinesId);
+            companyDao.deleteById(microsoftCorpId);
+            companyDao.deleteById(doesntMatterId);
+
+            employeeDao.deleteById(numberOfSmiths);
+//            employeeDao.deleteById(numberOfPartLastNames);
+            companyDao.deleteById(numberOfCompaniesWithNamesLongerThan5);
+//            companyDao.deleteById(numberOfCompaniesWithNamesIncludedMatt);
+        } catch (Exception e) {
+            //do nothing
+        }
     }
 }

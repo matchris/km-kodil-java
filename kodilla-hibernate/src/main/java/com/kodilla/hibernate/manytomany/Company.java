@@ -5,6 +5,22 @@ import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@NamedNativeQueries({
+        @NamedNativeQuery(
+                name = "Company.retrieveCompanyFirstThreeLettersOfName",
+                query = "SELECT * FROM companies WHERE substring(company_name,1,3) = :SEARCHFIRSTTHREELETTERS",
+                resultClass = Company.class),
+        @NamedNativeQuery(
+                name = "Company.retrieveCompanyLongerThanSomeNumber",
+                query = "SELECT * FROM companies WHERE LENGTH(company_name)> :NUMBEROFNAMELENGHTCONSTRAIN",
+                resultClass = Company.class),
+        @NamedNativeQuery(
+                name = "Company.retrieveCompanyContainingAnyPartOfTextInName",
+                query = "SELECT * FROM companies WHERE company_name LIKE :ANYPARTOFTEXTINNAME"
+
+        )}
+)
+
 @Entity
 @Table(name = "COMPANIES")
 public class Company {
@@ -41,7 +57,7 @@ public class Company {
         this.name = name;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL,mappedBy = "companies")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "companies")
     public List<Employee> getEmployees() {
         return employees;
     }
