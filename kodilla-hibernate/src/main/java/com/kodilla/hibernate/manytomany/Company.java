@@ -16,7 +16,7 @@ import java.util.List;
                 resultClass = Company.class),
         @NamedNativeQuery(
                 name = "Company.retrieveCompanyContainingAnyPartOfTextInName",
-                query = "SELECT * FROM companies WHERE company_name LIKE :ANYPARTOFTEXTINNAME"
+                query = "SELECT * FROM companies WHERE company_name LIKE concat('%',:ANYPARTOFTEXTINNAME,'%')"
 
         )}
 )

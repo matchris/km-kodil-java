@@ -25,7 +25,8 @@ public class CompanyFacade {
             throw new FoundException(FoundException.ERR_TOO_SHORT_PHRASE_PROVIDED);
         }
         LOGGER.info("Finding by name completed");
-        return companyService.findByPartOfCompanyName(name);
+        List<Company> byPartOfCompanyName = companyService.findByPartOfCompanyName(name);
+        return byPartOfCompanyName;
 
     }
 }
