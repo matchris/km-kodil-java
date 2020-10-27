@@ -25,10 +25,9 @@ public class Statistics implements BookStatistics {
         }
         Arrays.sort(years);
         if (years.length % 2 == 0) {
-            return years[(int) ((years[years.length/2]+years[(years.length/2)-1])/2)];
+            return ((years[years.length / 2] + years[(years.length / 2) - 1]) / 2);
         } else {
             return years[years.length / 2];
         }
     }
-
 }
