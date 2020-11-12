@@ -11,6 +11,8 @@ import org.openqa.selenium.support.ui.Select;
 
 import java.util.Random;
 
+import static org.junit.Assert.assertTrue;
+
 public class CrudAppTestSuite {
     private static final String BASE_URL = "https://matchris.github.io/";
     private WebDriver driver;
@@ -66,13 +68,47 @@ public class CrudAppTestSuite {
                             theForm.findElement(By.xpath(".//button[contains(@class, \"card-creation\")]"));
                     buttonCreateCard.click();
                 });
+
         Thread.sleep(15000);
+    }
+
+    private boolean checkTaskExistsInTrello(String taskName) throws InterruptedException {
+        final String TRELLO_URL = "https://trello.com/login";
+        boolean result = false;
+        WebDriver driverTrello = WebDriverConfig.getDriver(WebDriverConfig.CHROME);
+        driverTrello.get(TRELLO_URL);
+
+        driverTrello.findElement(By.id("user")).sendKeys("user_a");
+        driverTrello.findElement(By.id("password")).sendKeys("user_a");
+        WebElement el = driverTrello.findElement(By.id("login"));
+        el.submit();
+
+        Thread.sleep(4000);
+
+        driverTrello.findElement(By.id("password")).sendKeys("user_a");
+        driverTrello.findElement(By.id("login-submit")).submit();
+
+        Thread.sleep(4000);
+
+        driverTrello.findElements(By.xpath("//a[@class=\"board-tile\"]")).stream()
+                .filter(aHref -> aHref.findElements(By.xpath(".//div[@title=\"Kodilla Application\"]")).size() > 0)
+                .forEach(WebElement::click);
+
+        Thread.sleep(4000);
+
+        result = driverTrello.findElements(By.xpath("//span")).stream()
+                .allMatch(theSpan -> theSpan.getText().equals(taskName));
+
+        driverTrello.close();
+
+        return result;
     }
 
     @Test
     public void shouldCreateTrelloCard() throws InterruptedException {
         String taskName = createCrudAppTestTask();
         sendTestTaskToTrello(taskName);
+        assertTrue(checkTaskExistsInTrello(taskName));
     }
 }
 
