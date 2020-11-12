@@ -10,6 +10,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertTrue;
 
@@ -104,11 +105,27 @@ public class CrudAppTestSuite {
         return result;
     }
 
+    private void cleanUpInCrudApp(String taskName) throws InterruptedException {
+        driver.navigate().refresh();
+
+        while (!driver.findElement(By.xpath("//select[1]")).isDisplayed()) ;
+        driver.findElements(By.xpath("//form[@class=\"datatable__row\"]")).stream()
+                .filter(anyForm ->
+                        anyForm.findElement(By.xpath(".//p[@class=\"datatable__field-value\"]"))
+                                .getText().equals(taskName))
+                .forEach(theForm -> {
+                    WebElement buttonDeleteCard = theForm.findElement(By.xpath(".//button[4]"));
+                    buttonDeleteCard.click();
+                });
+        Thread.sleep(3000);
+    }
+
     @Test
     public void shouldCreateTrelloCard() throws InterruptedException {
         String taskName = createCrudAppTestTask();
         sendTestTaskToTrello(taskName);
         assertTrue(checkTaskExistsInTrello(taskName));
+        cleanUpInCrudApp(taskName);
     }
 }
 
